@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Products - Lenskart Clone</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <nav class="navbar">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">Lenskart</a>
+      <div class="nav-links">
+        <a href="index.html">Home</a><a href="products.html">Products</a><a href="about.html">About</a><a href="reviews.html">Reviews</a><a href="contact.html">Contact</a>
+<a href="profile.html" id="nav-profile" style="display:none;">Profile</a>
+        <a href="wishlist.html" class="nav-wishlist">Wishlist <span class="badge" id="wishlist-count" style="display:none;">0</span></a>
+        <a href="cart.html" class="nav-cart">Cart <span class="badge" id="cart-count" style="display:none;">0</span></a>
+        <a href="login.html" id="nav-login">Login</a>
+        <a href="#" id="nav-logout" style="display:none;" onclick="logoutUser(); return false;">Logout</a>
+      </div>
+    </div>
+  </nav>
+  <div class="container">
+    <h2 class="section-title">Products</h2>
+    <div class="products-category-bar">
+      <label for="category-filter">Category:</label>
+      <select id="category-filter" class="category-select">
+        <option value="">All Categories</option>
+      </select>
+    </div>
+    <div class="product-grid" id="products-grid"></div>
+<p id="no-products" style="display:none; color: var(--text-light);">No products in this category. Admin can add products.</p>
+  </div>
+
+  <!-- Rating Modal -->
+  <div id="rating-modal" class="modal" style="display:none;">
+    <div class="modal-content">
+      <span class="modal-close" onclick="closeRatingModal()">&times;</span>
+      <h3>Rate this Product</h3>
+      <div id="rating-product-info" style="margin-bottom:1rem;"></div>
+      <div class="rating-submit-form">
+        <div class="form-group">
+          <label>Your Rating</label>
+          <div class="star-rating-input" id="star-rating-input">
+            <span class="star" data-value="1">★</span>
+            <span class="star" data-value="2">★</span>
+            <span class="star" data-value="3">★</span>
+            <span class="star" data-value="4">★</span>
+            <span class="star" data-value="5">★</span>
+          </div>
+          <input type="hidden" id="rating-value" value="0">
+        </div>
+        <div class="form-group">
+          <label for="rating-review">Your Review (optional)</label>
+          <textarea id="rating-review" placeholder="Share your experience with this product..."></textarea>
+        </div>
+        <button type="button" class="btn btn-primary" onclick="submitRating()">Submit Review</button>
+      </div>
+    </div>
+  </div>
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-nav-links">
+<a href="cart.html">Cart</a><a href="wishlist.html">Wishlist</a><a href="login.html" id="footer-login">Login</a>
+      </div>
+      <div class="footer-bottom">&copy; Navdip Talsaniya.</div>
+    </div>
+  </footer>
+  <script src="js/storage.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/user.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/admin.js"></script>
+  <script>
+    seedProductsIfEmpty();
+    updateNavbar();
+    updateCartBadge();
+    updateWishlistBadge();
+    if (typeof updateFooterAuth === 'function') updateFooterAuth();
+    var container = document.getElementById('products-grid');
+    var noProducts = document.getElementById('no-products');
+    var select = document.getElementById('category-filter');
+    var products = getProducts();
+    function getCategory(p) { return (p.category && String(p.category).trim()) ? String(p.category).trim() : 'Eyewear'; }
+    var uniqueCats = [];
+    products.forEach(function(p) {
+      var c = getCategory(p);
+      if (uniqueCats.indexOf(c) === -1) uniqueCats.push(c);
+    });
+    uniqueCats.sort();
+    uniqueCats.forEach(function(cat) { var o = document.createElement('option'); o.value = cat; o.textContent = cat; select.appendChild(o); });
+    function render() {
+      var cat = select.value;
+      var list = cat ? products.filter(function(p) { return getCategory(p) === cat; }) : products;
+      container.innerHTML = '';
+      if (list.length === 0) { noProducts.style.display = 'block'; }
+      else {
+        noProducts.style.display = 'none';
+list.forEach(function(p) {
+          var card = renderProductCard(p);
+          card.dataset.productId = p.id;
+          
+          // Add Rate button to the card
+          var infoDiv = card.querySelector('.info');
+          if (infoDiv) {
+            var rateBtn = document.createElement('button');
+            rateBtn.className = 'btn btn-secondary rate-btn';
+            rateBtn.textContent = 'Rate this Product';
+            rateBtn.onclick = function() { openRatingModal(p.id, p.name, p.imageUrl); };
+            infoDiv.appendChild(rateBtn);
+          }
+          
+          container.appendChild(card);
+        });
+        var highlight = new URLSearchParams(window.location.search).get('highlight');
+        if (highlight) {
+          var el = container.querySelector('[data-product-id="' + highlight + '"]');
+          if (el) { el.scrollIntoView({ behavior: 'smooth', block: 'center' }); el.classList.add('product-card-highlight'); }
+        }
+      }
+    }
+select.addEventListener('change', render);
+    render();
+    
+    // ========== RATING FUNCTIONS ==========
+    var currentRatingProductId = null;
+    
+    function openRatingModal(productId, productName, productImage) {
+      var user = getCurrentUser();
+      if (!user) { 
+        alert('Please login to rate products.'); 
+        window.location.href = 'login.html?redirect=products'; 
+        return; 
+      }
+      
+      currentRatingProductId = productId;
+      
+      // Check if user already rated this product
+      var existingReview = getUserReviewForProduct(productId, user.id);
+      
+      // Show product info in modal
+      var productInfo = document.getElementById('rating-product-info');
+      var fallbackImg = 'https://via.placeholder.com/100/0066cc/ffffff?text=Eyewear';
+      productInfo.innerHTML = '<div style="display:flex;align-items:center;gap:1rem;">' +
+        '<img src="' + (productImage || fallbackImg) + '" alt="' + productName + '" style="width:60px;height:60px;object-fit:cover;border-radius:8px;">' +
+        '<div><strong>' + productName + '</strong></div></div>';
+      
+      // If user has existing review, show their rating
+      if (existingReview) {
+        document.getElementById('rating-value').value = existingReview.rating;
+        document.getElementById('rating-review').value = existingReview.review || '';
+        updateStarDisplay(existingReview.rating);
+      } else {
+        document.getElementById('rating-value').value = 0;
+        document.getElementById('rating-review').value = '';
+        updateStarDisplay(0);
+      }
+      
+      // Show modal
+      document.getElementById('rating-modal').style.display = 'block';
+    }
+    
+    function closeRatingModal() {
+      document.getElementById('rating-modal').style.display = 'none';
+      currentRatingProductId = null;
+    }
+    
+    function updateStarDisplay(rating) {
+      var stars = document.querySelectorAll('#star-rating-input .star');
+      stars.forEach(function(star, index) {
+        if (index < rating) {
+          star.classList.add('active');
+        } else {
+          star.classList.remove('active');
+        }
+      });
+    }
+    
+    function submitRating() {
+      if (!currentRatingProductId) {
+        alert('No product selected for rating.');
+        return;
+      }
+      
+      var rating = parseInt(document.getElementById('rating-value').value, 10);
+      if (rating === 0) {
+        alert('Please select a star rating.');
+        return;
+      }
+      
+      var review = document.getElementById('rating-review').value;
+      
+      // Use the addProductReview function from user.js
+      var success = addProductReview(currentRatingProductId, rating, review, getCurrentUser().id);
+      
+      if (success) {
+        alert('Thank you for your review!');
+        closeRatingModal();
+        // Refresh the page to show updated ratings
+        location.reload();
+      } else {
+        alert('Failed to submit review. Please try again.');
+      }
+    }
+    
+    // Set up star rating click handlers
+    (function() {
+      var stars = document.querySelectorAll('#star-rating-input .star');
+      stars.forEach(function(star) {
+        star.addEventListener('click', function() {
+          var value = parseInt(this.getAttribute('data-value'), 10);
+          document.getElementById('rating-value').value = value;
+          updateStarDisplay(value);
+        });
+        
+        star.addEventListener('mouseover', function() {
+          var value = parseInt(this.getAttribute('data-value'), 10);
+          updateStarDisplay(value);
+        });
+        
+        star.addEventListener('mouseout', function() {
+          var currentValue = parseInt(document.getElementById('rating-value').value, 10);
+          updateStarDisplay(currentValue);
+        });
+      });
+      
+      // Close modal when clicking outside
+      window.addEventListener('click', function(event) {
+        var modal = document.getElementById('rating-modal');
+        if (event.target === modal) {
+          closeRatingModal();
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Upcoming Products - Lenskart Clone Admin</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+  <div class="admin-layout">
+    <aside class="admin-sidebar">
+      <div class="sidebar-title">Admin Panel</div>
+      <nav>
+        <a href="../index.html">Home</a>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="users.html">Users</a>
+        <a href="products.html">Products / Services</a>
+        <a href="upcoming.html" class="active">Upcoming Products</a>
+        <a href="orders.html">Orders</a>
+        <a href="profile.html">Profile</a>
+        <a href="contact.html">Contact</a>
+        <div class="sidebar-divider"></div>
+        <a href="#" onclick="adminLogout(); return false;">Logout</a>
+      </nav>
+    </aside>
+    <main class="admin-main">
+      <div class="container">
+        <h2 class="section-title">Upcoming Products</h2>
+        <p style="color: var(--text-light); margin-bottom: 1.5rem;">Add products that will appear in the "Coming Soon" section on the homepage.</p>
+        <div class="admin-section">
+          <h2 id="upcoming-form-title">Add Upcoming Product</h2>
+          <div id="upcoming-alert"></div>
+          <form id="upcoming-form" class="product-form">
+            <input type="hidden" id="upcoming-id" value="">
+            <div class="form-row">
+              <div class="form-group"><label for="upcoming-name">Product Name</label><input type="text" id="upcoming-name" required placeholder="e.g. Premium Aviator 2025"></div>
+              <div class="form-group"><label for="upcoming-category">Category</label>
+                <select id="upcoming-category">
+                  <option value="">Select category</option>
+                  <option value="Eyewear">Eyewear</option>
+                  <option value="Sunglasses">Sunglasses</option>
+                  <option value="Blue Light Glasses">Blue Light Glasses</option>
+                  <option value="Reading Glasses">Reading Glasses</option>
+                  <option value="Contact Lenses">Contact Lenses</option>
+                  <option value="Frames">Frames</option>
+                  <option value="Kids Glasses">Kids Glasses</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group"><label for="upcoming-description">Short Description</label><textarea id="upcoming-description" placeholder="Brief teaser for the product..."></textarea></div>
+            <div class="form-row">
+              <div class="form-group"><label for="upcoming-image">Image URL</label><input type="url" id="upcoming-image" placeholder="https://..."></div>
+              <div class="form-group"><label for="upcoming-release">Release Date (optional)</label><input type="text" id="upcoming-release" placeholder="e.g. March 2025"></div>
+            </div>
+            <button type="submit" class="btn btn-primary" id="upcoming-submit">Add Upcoming Product</button>
+            <button type="button" class="btn btn-secondary" id="upcoming-cancel" style="display:none;">Cancel</button>
+          </form>
+        </div>
+        <div class="admin-section">
+          <h2>Upcoming List</h2>
+          <div class="admin-table-wrap">
+            <table class="admin-table">
+              <thead><tr><th>Image</th><th>Name</th><th>Category</th><th>Release</th><th>Actions</th></tr></thead>
+              <tbody id="upcoming-tbody"></tbody>
+            </table>
+          </div>
+          <p id="no-upcoming" style="display:none; color: var(--text-light);">No upcoming products. Add one above.</p>
+        </div>
+      </div>
+    </main>
+  </div>
+  <footer class="site-footer"><div class="footer-inner"><div class="footer-bottom">&copy; Navdip Talsaniya.</div></div></footer>
+<script src="../js/storage.js"></script>
+  <script src="../js/admin.js"></script>
+  <script>
+    if (!requireAdmin()) throw new Error('Redirecting');
+    function renderUpcomingList() {
+      var tbody = document.getElementById('upcoming-tbody');
+      var noEl = document.getElementById('no-upcoming');
+      var list = getUpcomingProducts();
+      if (list.length === 0) { tbody.innerHTML = ''; noEl.style.display = 'block'; return; }
+      noEl.style.display = 'none';
+      tbody.innerHTML = list.map(function(p) {
+        // For admin panel (in admin/ folder), prepend '../' to relative image paths
+        var imgUrl = p.imageUrl || '';
+        if (imgUrl && !imgUrl.startsWith('http') && !imgUrl.startsWith('../')) {
+          imgUrl = '../' + imgUrl;
+        }
+        return '<tr><td><img src="' + (imgUrl || 'https://via.placeholder.com/50') + '" alt="" style="width:80px;height:50px;object-fit:cover;border-radius:4px;"></td><td>' + p.name + '</td><td>' + (p.category || '-') + '</td><td>' + (p.releaseDate || '-') + '</td><td class="actions"><button type="button" class="btn btn-secondary btn-edit-upcoming" data-id="' + p.id + '">Edit</button> <button type="button" class="btn btn-danger btn-delete-upcoming" data-id="' + p.id + '">Delete</button></td></tr>';
+      }).join('');
+      tbody.querySelectorAll('.btn-edit-upcoming').forEach(function(btn) {
+        btn.onclick = function() {
+          var id = btn.getAttribute('data-id');
+          var p = getUpcomingProducts().find(function(x) { return x.id === id; });
+          if (!p) return;
+          document.getElementById('upcoming-id').value = p.id;
+          document.getElementById('upcoming-name').value = p.name;
+          document.getElementById('upcoming-description').value = p.description || '';
+          document.getElementById('upcoming-category').value = p.category || '';
+          document.getElementById('upcoming-image').value = p.imageUrl || '';
+          document.getElementById('upcoming-release').value = p.releaseDate || '';
+          document.getElementById('upcoming-form-title').textContent = 'Edit Upcoming Product';
+          document.getElementById('upcoming-submit').textContent = 'Update';
+          document.getElementById('upcoming-cancel').style.display = 'inline-block';
+        };
+      });
+      tbody.querySelectorAll('.btn-delete-upcoming').forEach(function(btn) {
+        btn.onclick = function() { if (confirm('Remove this upcoming product?')) { deleteUpcomingProduct(btn.getAttribute('data-id')); renderUpcomingList(); } };
+      });
+    }
+    document.getElementById('upcoming-form').onsubmit = function(e) {
+      e.preventDefault();
+      var id = document.getElementById('upcoming-id').value;
+      var name = document.getElementById('upcoming-name').value;
+      var description = document.getElementById('upcoming-description').value;
+      var imageUrl = document.getElementById('upcoming-image').value;
+      var category = document.getElementById('upcoming-category').value;
+      var releaseDate = document.getElementById('upcoming-release').value;
+      var alertEl = document.getElementById('upcoming-alert');
+      if (id) {
+        updateUpcomingProduct(id, name, description, imageUrl, category, releaseDate);
+        alertEl.innerHTML = '<div class="alert alert-success">Updated.</div>';
+      } else {
+        addUpcomingProduct(name, description, imageUrl, category, releaseDate);
+        alertEl.innerHTML = '<div class="alert alert-success">Upcoming product added. It will show on the homepage.</div>';
+      }
+      document.getElementById('upcoming-id').value = '';
+      document.getElementById('upcoming-form-title').textContent = 'Add Upcoming Product';
+      document.getElementById('upcoming-submit').textContent = 'Add Upcoming Product';
+      document.getElementById('upcoming-cancel').style.display = 'none';
+      this.reset();
+      renderUpcomingList();
+      setTimeout(function() { alertEl.innerHTML = ''; }, 2500);
+    };
+    document.getElementById('upcoming-cancel').onclick = function() {
+      document.getElementById('upcoming-id').value = '';
+      document.getElementById('upcoming-form-title').textContent = 'Add Upcoming Product';
+      document.getElementById('upcoming-submit').textContent = 'Add Upcoming Product';
+      this.style.display = 'none';
+      document.getElementById('upcoming-form').reset();
+    };
+    renderUpcomingList();
+  </script>
+</body>
+</html>

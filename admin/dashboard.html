@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard - Lenskart Clone</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+  <div class="admin-layout">
+    <aside class="admin-sidebar">
+      <div class="sidebar-title">Admin Panel</div>
+      <nav>
+        <a href="../index.html">Home</a>
+        <a href="dashboard.html" class="active">Dashboard</a>
+        <a href="users.html">Users</a>
+        <a href="products.html">Products / Services</a>
+        <a href="upcoming.html">Upcoming Products</a>
+        <a href="orders.html">Orders</a>
+        <a href="ratings.html">Ratings</a>
+        <a href="profile.html">Profile</a>
+        <a href="contact.html">Contact</a>
+        <div class="sidebar-divider"></div>
+        <a href="#" onclick="adminLogout(); return false;">Logout</a>
+      </nav>
+    </aside>
+    <main class="admin-main">
+      <div class="container">
+        <h2 class="section-title">Dashboard</h2>
+        <div class="dashboard-stats">
+          <div class="stat-card"><h3>Total Users</h3><span class="value" id="stat-users">0</span></div>
+          <div class="stat-card"><h3>Total Products</h3><span class="value" id="stat-products">0</span></div>
+          <div class="stat-card orders"><h3>Total Orders</h3><span class="value" id="stat-orders">0</span></div>
+          <div class="stat-card revenue"><h3>Total Revenue</h3><span class="value" id="stat-revenue">₹0</span></div>
+        </div>
+        <div class="admin-section">
+          <h2>Contact Messages</h2>
+          <div id="contact-messages"></div>
+        </div>
+      </div>
+    </main>
+  </div>
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-grid">
+        <div class="footer-col"><h4>Admin</h4><ul><li><a href="dashboard.html">Dashboard</a></li><li><a href="products.html">Products</a></li><li><a href="orders.html">Orders</a></li></ul></div>
+        <div class="footer-col"><h4>Site</h4><ul><li><a href="../index.html">View Website</a></li></ul></div>
+      </div>
+      <div class="footer-bottom">&copy; Navdip Talsaniya.</div>
+    </div>
+  </footer>
+  <script src="../js/storage.js"></script>
+  <script src="../js/admin.js"></script>
+  <script src="../js/dashboard.js"></script>
+  <script>
+    if (!requireAdmin()) throw new Error('Redirecting');
+    renderDashboardStats();
+    renderContactMessages('contact-messages');
+  </script>
+</body>
+</html>

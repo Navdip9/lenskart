@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Products - Lenskart Clone</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+  <div class="admin-layout">
+    <aside class="admin-sidebar">
+      <div class="sidebar-title">Admin Panel</div>
+      <nav>
+        <a href="../index.html">Home</a>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="users.html">Users</a>
+        <a href="products.html" class="active">Products / Services</a>
+        <a href="upcoming.html">Upcoming Products</a>
+        <a href="orders.html">Orders</a>
+        <a href="ratings.html">Ratings</a>
+        <a href="profile.html">Profile</a>
+        <a href="contact.html">Contact</a>
+        <div class="sidebar-divider"></div>
+        <a href="#" onclick="adminLogout(); return false;">Logout</a>
+      </nav>
+    </aside>
+    <main class="admin-main">
+      <div class="container">
+        <h2 class="section-title">Product Management</h2>
+        <div class="admin-section">
+          <h2 id="form-title">Add Product</h2>
+          <div id="product-alert"></div>
+          <form id="product-form" class="product-form">
+            <input type="hidden" id="product-id" value="">
+            <div class="form-row">
+              <div class="form-group"><label for="product-name">Product Name</label><input type="text" id="product-name" required placeholder="e.g. Blue Aviator"></div>
+              <div class="form-group"><label for="product-price">Price (Rs)</label><input type="number" id="product-price" required min="0" placeholder="999"></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label for="product-category">Category</label>
+                <select id="product-category">
+                  <option value="">Select category</option>
+                  <option value="Eyewear">Eyewear</option>
+                  <option value="Sunglasses">Sunglasses</option>
+                  <option value="Blue Light Glasses">Blue Light Glasses</option>
+                  <option value="Reading Glasses">Reading Glasses</option>
+                  <option value="Contact Lenses">Contact Lenses</option>
+                  <option value="Frames">Frames</option>
+                  <option value="Kids Glasses">Kids Glasses</option>
+                  <option value="Polarized Sunglasses">Polarized Sunglasses</option>
+                  <option value="Aviator">Aviator</option>
+                  <option value="Round Frame">Round Frame</option>
+                  <option value="Cat-Eye">Cat-Eye</option>
+                  <option value="Sports Glasses">Sports Glasses</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+        <div class="form-group"><label for="product-image">Image URL</label><input type="url" id="product-image" placeholder="https://."></div>
+            </div>
+            <button type="submit" class="btn btn-primary" id="product-submit">Add Product</button>
+            <button type="button" class="btn btn-secondary" id="product-cancel" style="display:none;">Cancel</button>
+          </form>
+        </div>
+        <div class="admin-section">
+          <h2>Product List</h2>
+          <div class="admin-table-wrap">
+            <table class="admin-table">
+              <thead><tr><th>Image</th><th>Name</th><th>Price</th><th>Category</th><th>Actions</th></tr></thead>
+              <tbody id="products-tbody"></tbody>
+            </table>
+          </div>
+          <p id="no-products" style="display:none; color: var(--text-light);">No products. Add one above.</p>
+        </div>
+      </div>
+    </main>
+  </div>
+  <footer class="site-footer"><div class="footer-inner"><div class="footer-bottom">&copy; Navdip Talsaniya.</div></div></footer>
+  <script src="../js/admin.js"></script>
+  <script>
+    if (!requireAdmin()) throw new Error('Redirecting');
+    seedProductsIfEmpty();
+    function renderProductList() {
+      var tbody = document.getElementById('products-tbody');
+      var noProducts = document.getElementById('no-products');
+      var products = getAdminProducts();
+      if (products.length === 0) { tbody.innerHTML = ''; noProducts.style.display = 'block'; return; }
+      noProducts.style.display = 'none';
+      tbody.innerHTML = products.map(function(p) {
+        // For admin panel (in admin/ folder), prepend '../' to relative image paths
+        var imgUrl = p.imageUrl || '';
+        if (imgUrl && !imgUrl.startsWith('http') && !imgUrl.startsWith('../')) {
+          imgUrl = '../' + imgUrl;
+        }
+        return '<tr><td><img src="' + (imgUrl || 'https://via.placeholder.com/50') + '" alt="" style="width:100px;height:50px;object-fit:cover;border-radius:4px;"></td><td>' + p.name + '</td><td>Rs ' + p.price + '</td><td>' + (p.category || '-') + '</td><td class="actions"><button type="button" class="btn btn-secondary btn-edit" data-id="' + p.id + '">Edit</button> <button type="button" class="btn btn-danger btn-delete" data-id="' + p.id + '">Delete</button></td></tr>';
+      }).join('');
+      tbody.querySelectorAll('.btn-edit').forEach(function(btn) {
+        btn.onclick = function() {
+          var id = btn.getAttribute('data-id');
+          var p = getAdminProducts().find(function(x) { return x.id === id; });
+          if (!p) return;
+          document.getElementById('product-id').value = p.id;
+          document.getElementById('product-name').value = p.name;
+          document.getElementById('product-price').value = p.price;
+          document.getElementById('product-category').value = p.category || '';
+          document.getElementById('product-image').value = p.imageUrl || '';
+          document.getElementById('form-title').textContent = 'Edit Product';
+          document.getElementById('product-submit').textContent = 'Update Product';
+          document.getElementById('product-cancel').style.display = 'inline-block';
+        };
+      });
+      tbody.querySelectorAll('.btn-delete').forEach(function(btn) {
+        btn.onclick = function() { if (confirm('Delete this product?')) { deleteProduct(btn.getAttribute('data-id')); renderProductList(); } };
+      });
+    }
+    document.getElementById('product-form').onsubmit = function(e) {
+      e.preventDefault();
+      var id = document.getElementById('product-id').value;
+      var name = document.getElementById('product-name').value;
+      var price = document.getElementById('product-price').value;
+      var category = document.getElementById('product-category').value;
+      var imageUrl = document.getElementById('product-image').value;
+      var alertEl = document.getElementById('product-alert');
+      if (id) {
+        updateProduct(id, name, price, category, imageUrl);
+        alertEl.innerHTML = '<div class="alert alert-success">Product updated.</div>';
+        document.getElementById('product-id').value = '';
+        document.getElementById('form-title').textContent = 'Add Product';
+        document.getElementById('product-submit').textContent = 'Add Product';
+        document.getElementById('product-cancel').style.display = 'none';
+        this.reset();
+      } else {
+        addProduct(name, price, category, imageUrl);
+        alertEl.innerHTML = '<div class="alert alert-success">Product added.</div>';
+        this.reset();
+      }
+      renderProductList();
+      setTimeout(function() { alertEl.innerHTML = ''; }, 2000);
+    };
+    document.getElementById('product-cancel').onclick = function() {
+      document.getElementById('product-id').value = '';
+      document.getElementById('form-title').textContent = 'Add Product';
+      document.getElementById('product-submit').textContent = 'Add Product';
+      this.style.display = 'none';
+      document.getElementById('product-form').reset();
+    };
+
+    
+    renderProductList();
+  </script>
+</body>
+</html>

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Orders - Lenskart Clone</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+  <div class="admin-layout">
+    <aside class="admin-sidebar">
+      <div class="sidebar-title">Admin Panel</div>
+      <nav>
+        <a href="../index.html">Home</a>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="users.html">Users</a>
+        <a href="products.html">Products / Services</a>
+        <a href="upcoming.html">Upcoming Products</a>
+        <a href="orders.html" class="active">Orders</a>
+        <a href="ratings.html">Ratings</a>
+        <a href="profile.html">Profile</a>
+        <a href="contact.html">Contact</a>
+        <div class="sidebar-divider"></div>
+        <a href="#" onclick="adminLogout(); return false;">Logout</a>
+      </nav>
+    </aside>
+    <main class="admin-main">
+      <div class="container">
+        <h2 class="section-title">Order Management</h2>
+        <p style="color: var(--text-light); margin-bottom: 1rem;">All user orders. Revenue = sum of order totals (see Dashboard).</p>
+        <div id="orders-list"></div>
+        <p id="no-orders" style="display:none; color: var(--text-light);">No orders yet.</p>
+      </div>
+    </main>
+  </div>
+  <footer class="site-footer"><div class="footer-inner"><div class="footer-bottom">&copy; Navdip Talsaniya.</div></div></footer>
+<script src="../js/storage.js"></script>
+  <script src="../js/admin.js"></script>
+  <script>
+    if (!requireAdmin()) throw new Error('Redirecting');
+    var orders = getAdminOrders();
+    var container = document.getElementById('orders-list');
+    var noOrders = document.getElementById('no-orders');
+    function renderOrders() {
+      var orders = getAdminOrders();
+      if (orders.length === 0) { container.innerHTML = ''; noOrders.style.display = 'block'; return; }
+      noOrders.style.display = 'none';
+      container.innerHTML = orders.map(function(o) {
+        var status = o.status || 'Pending';
+        var opts = ORDER_STATUSES.map(function(s) { return '<option value="' + s.value + '"' + (status === s.value ? ' selected' : '') + '>' + s.label + '</option>'; }).join('');
+        return '<div class="order-card" data-id="' + o.id + '"><div class="order-meta">' +
+          '<span><strong>Order #</strong> ' + o.id + '</span>' +
+          '<span><strong>User</strong> ' + (o.userName || 'N/A') + ' (' + (o.userEmail || '') + ')</span>' +
+          '<span><strong>Date</strong> ' + new Date(o.date).toLocaleString() + '</span>' +
+          '</div><div class="order-items">' + (o.items || []).map(function(i) { return i.name + ' x ' + i.quantity + ' @ Rs ' + i.price; }).join('<br>') + '</div>' +
+          '<div class="order-row"><div class="order-total">Total: Rs ' + (o.totalAmount || 0).toFixed(0) + '</div>' +
+          '<div class="order-status-control"><label>Status:</label> <select class="order-status-select" data-id="' + o.id + '">' + opts + '</select></div></div></div>';
+      }).join('');
+      container.querySelectorAll('.order-status-select').forEach(function(sel) {
+        sel.addEventListener('change', function() {
+          updateOrderStatus(sel.getAttribute('data-id'), sel.value);
+        });
+      });
+    }
+    renderOrders();
+  </script>
+</body>
+</html>

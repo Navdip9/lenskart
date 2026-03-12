@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About Us - Lenskart Clone</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <nav class="navbar">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">Lenskart</a>
+<div class="nav-links">
+        <a href="index.html">Home</a><a href="products.html">Products</a><a href="about.html">About</a><a href="reviews.html">Reviews</a><a href="contact.html">Contact</a>
+        <a href="profile.html" id="nav-profile" style="display:none;">Profile</a>
+        <a href="wishlist.html" class="nav-wishlist">Wishlist <span class="badge" id="wishlist-count" style="display:none;">0</span></a>
+        <a href="cart.html" class="nav-cart">Cart <span class="badge" id="cart-count" style="display:none;">0</span></a>
+        <a href="login.html" id="nav-login">Login</a>
+        <a href="#" id="nav-logout" style="display:none;" onclick="logoutUser(); return false;">Logout</a>
+      </div>
+    </div>
+  </nav>
+  <div class="container">
+    <h2 class="section-title">About Lenskart</h2>
+    <p style="margin-bottom: 1.5rem; color: var(--text-light); max-width: 720px;">We are your one-stop destination for eyewear. Here are the services we provide.</p>
+
+    <div class="about-services">
+      <div class="about-service-card">
+        <h3>Eyewear</h3>
+        <p>Wide range of prescription glasses and frames for men, women, and kids. Find the perfect fit and style.</p>
+      </div>
+      <div class="about-service-card">
+        <h3>Sunglasses</h3>
+        <p>Trendy and polarized sunglasses for every occasion. UV protection and premium lenses.</p>
+      </div>
+      <div class="about-service-card">
+        <h3>Blue Light Glasses</h3>
+        <p>Reduce digital eye strain with our blue light filtering glasses, ideal for screen time.</p>
+      </div>
+      <div class="about-service-card">
+        <h3>Reading Glasses</h3>
+        <p>Comfortable reading glasses in multiple powers and styles for daily use.</p>
+      </div>
+      <div class="about-service-card">
+        <h3>Contact Lenses</h3>
+        <p>Quality contact lenses with easy ordering and delivery. Daily, monthly, and colored options.</p>
+      </div>
+      <div class="about-service-card">
+        <h3>Free Shipping & Returns</h3>
+        <p>We offer free shipping on orders and hassle-free returns so you can shop with confidence.</p>
+      </div>
+    </div>
+  </div>
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-nav-links">
+        <a href="index.html">Home</a><a href="products.html">Products</a><a href="about.html">About</a><a href="reviews.html">Reviews</a><a href="contact.html">Contact</a><a href="profile.html" id="footer-profile" style="display:none;">Profile</a><a href="cart.html">Cart</a><a href="login.html" id="footer-login">Login</a><a href="register.html" id="footer-register">Register</a><a href="#" id="footer-logout" style="display:none;" onclick="logoutUser(); return false;">Logout</a>
+      </div>
+      <div class="footer-bottom">&copy; Navdip Talsaniya.</div>
+    </div>
+  </footer>
+<script src="js/storage.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/user.js"></script>
+  <script src="js/cart.js"></script>
+  <script>
+updateNavbar();
+    if (typeof updateFooterAuth === 'function') updateFooterAuth();
+    updateCartBadge();
+    updateWishlistBadge();
+  </script>
+</body>
+</html>

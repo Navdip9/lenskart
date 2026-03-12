@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lenskart Clone - Home</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- 10-second stylish eyeglasses intro (skip anytime) -->
+  <div class="intro-overlay" id="intro-overlay">
+    <div class="intro-bg">
+      <span class="intro-particle intro-particle-1"></span>
+      <span class="intro-particle intro-particle-2"></span>
+      <span class="intro-particle intro-particle-3"></span>
+      <span class="intro-particle intro-particle-4"></span>
+      <span class="intro-particle intro-particle-5"></span>
+      <span class="intro-particle intro-particle-6"></span>
+    </div>
+    <button type="button" class="intro-skip" id="intro-skip" aria-label="Skip intro">Skip <span id="intro-skip-sec">10</span>s</button>
+    <div class="intro-inner">
+      <div class="intro-glasses" aria-hidden="true">
+        <svg class="glasses-svg" viewBox="0 0 120 50" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="intro-lens-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" style="stop-color:#fff;stop-opacity:0.9"/>
+              <stop offset="100%" style="stop-color:#aad4ff;stop-opacity:0.6"/>
+            </linearGradient>
+            <filter id="intro-glow"><feGaussianBlur stdDeviation="1.5" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+          </defs>
+          <circle class="lens lens-left" cx="30" cy="25" r="18" fill="none" stroke="url(#intro-lens-grad)" stroke-width="3"/>
+          <circle class="lens lens-right" cx="90" cy="25" r="18" fill="none" stroke="url(#intro-lens-grad)" stroke-width="3"/>
+          <path class="bridge" d="M 48 22 Q 60 18 72 22" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+          <line class="arm arm-left" x1="12" y1="25" x2="0" y2="25" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+          <line class="arm arm-right" x1="108" y1="25" x2="120" y2="25" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+          <circle class="lens-shine" cx="30" cy="25" r="6" fill="rgba(255,255,255,0.4)"/>
+        </svg>
+      </div>
+      <p class="intro-text">Lenskart</p>
+      <p class="intro-tagline">Eyewear for everyone. Style that fits you.</p>
+      <p class="intro-enter" id="intro-enter">Enter Store</p>
+    </div>
+    <div class="intro-progress-wrap">
+      <div class="intro-progress" id="intro-progress"></div>
+    </div>
+    <div class="intro-timer"><span id="intro-countdown">10</span></div>
+  </div>
+
+  <nav class="navbar">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">Lenskart</a>
+      <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="products.html">Products</a>
+        <a href="about.html">About</a>
+        <a href="reviews.html">Reviews</a>
+        <a href="contact.html">Contact</a>
+        <a href="profile.html" id="nav-profile" style="display:none;">Profile</a>
+        <a href="wishlist.html" class="nav-wishlist">Wishlist <span class="badge" id="wishlist-count" style="display:none;">0</span></a>
+        <a href="cart.html" class="nav-cart">Cart <span class="badge" id="cart-count" style="display:none;">0</span></a>
+        <a href="login.html" id="nav-login">Login</a>
+        <a href="#" id="nav-logout" style="display:none;" onclick="logoutUser(); return false;">Logout</a>
+      </div>
+    </div>
+  </nav>
+
+  <section class="hero-slider" id="hero-slider">
+    <div class="slides" id="slider-slides">
+      <div class="slide banner-slide">
+        <a href="products.html">
+          <img src="image/bitz-230126.webp" alt="Lenskart Bitz - Little bitz for every mood">
+        </a>
+      </div>
+      <div class="slide banner-slide">
+        <a href="products.html">
+          <img src="image/Desktop-v3-meller-banner-230126.webp" alt="Meller collection - contemporary genuine creative eyewear">
+        </a>
+      </div>
+      <div class="slide banner-slide">
+        <a href="products.html">
+          <img src="image/hip-hop-230126.jpg" alt="Hip Hop eyewear collection">
+        </a>
+      </div>
+      <div class="slide banner-slide">
+        <a href="products.html">
+          <img src="image/Hustlr-230126.webp" alt="Hustlr - India&#39;s #1 selling glasses">
+        </a>
+      </div>
+      <div class="slide banner-slide">
+        <a href="products.html">
+          <img src="image/Nuun-230126.jpg" alt="Nuun selects from Seoul collection">
+        </a>
+      </div>
+      <div class="slide banner-slide">
+        <a href="products.html">
+          <img src="image/owndays-230126.webp" alt="Owndays postcards from Japan collection">
+        </a>
+      </div>
+      <div class="slide banner-slide">
+        <a href="products.html">
+          <img src="image/Indian-accent-230126.webp" alt="Indian Accent collection - inspired by Bidri">
+        </a>
+      </div>
+    </div>
+    <div class="dots" id="slider-dots"></div>
+  </section>
+
+  <div class="container">
+    <h2 class="section-title">Featured Products</h2>
+    <div class="product-grid" id="featured-products"></div>
+    <p style="margin-top: 1rem;"><a href="products.html" class="btn btn-primary">View All Products</a></p>
+  </div>
+
+  <div class="container">
+    <h2 class="section-title">Exclusively at Lenskart</h2>
+    <p style="color: var(--text-light); margin-bottom: 1rem;">Click any product for a closer look.</p>
+    <div class="product-grid" id="exclusive-products"></div>
+  </div>
+
+  <div class="container upcoming-section-wrap">
+    <h2 class="section-title">Coming Soon at Lenskart</h2>
+    <p style="color: var(--text-light); margin-bottom: 1rem;">Click any product for a preview.</p>
+    <div class="product-grid product-grid-upcoming" id="upcoming-products"></div>
+  </div>
+
+  <div id="product-view-modal" class="product-view-overlay" aria-hidden="true">
+    <div class="product-view-backdrop" id="product-view-close"></div>
+    <div class="product-view-fullscreen">
+      <div class="product-view-bg-animation" aria-hidden="true"></div>
+      <button type="button" class="product-view-close-btn" id="product-view-close-btn" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      <div class="product-view-content">
+        <div class="product-view-3d-wrap">
+          <div class="product-view-3d" id="product-view-3d">
+            <div class="product-view-3d-inner" id="product-view-3d-inner">
+              <div class="product-view-3d-glow"></div>
+              <img id="product-view-img" src="" alt="">
+            </div>
+          </div>
+          <p class="product-view-drag-hint">Drag to rotate · Scroll to zoom</p>
+        </div>
+        <div class="product-view-info">
+          <h3 id="product-view-name" class="product-view-anim"></h3>
+          <p class="product-view-category product-view-anim" id="product-view-category"></p>
+          <p class="product-view-price product-view-anim" id="product-view-price"></p>
+          <a href="products.html" id="product-view-link" class="btn btn-primary product-view-anim">View on Product Page</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+      <div class="footer-grid">
+        <div class="footer-col"><h4>Shop</h4><ul><li><a href="index.html">Home</a></li><li><a href="products.html">Products</a></li><li><a href="reviews.html">Reviews</a></li></ul></div>
+        <div class="footer-col"><h4>Info</h4><ul><li><a href="about.html">About Us</a></li><li><a href="contact.html">Contact</a></li></ul></div>
+        <div class="footer-col"><h4>Account</h4><ul><li><a href="login.html">Login</a></li><li><a href="register.html">Register</a></li><li><a href="profile.html">Profile</a></li><li><a href="cart.html">Cart</a></li></ul></div>
+      </div>
+      <div class="footer-bottom">&copy; Navdip Talsaniya.</div>
+    </div>
+  </footer>
+
+<script src="js/storage.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/admin.js"></script>
+<script src="js/user.js"></script>
+<script src="js/cart.js"></script>
+  <script>
+    (function(){
+      var INTRO_DURATION = 10;
+      var overlay = document.getElementById('intro-overlay');
+      var progress = document.getElementById('intro-progress');
+      var skipBtn = document.getElementById('intro-skip');
+      var skipSec = document.getElementById('intro-skip-sec');
+      var countdownEl = document.getElementById('intro-countdown');
+      var enterEl = document.getElementById('intro-enter');
+      var start = Date.now();
+      var done = false;
+      function hideIntro() {
+        if (done) return;
+        done = true;
+        overlay.classList.add('intro-done');
+        setTimeout(function() { overlay.style.display = 'none'; }, 600);
+      }
+      if (skipBtn) skipBtn.addEventListener('click', hideIntro);
+      if (enterEl) enterEl.addEventListener('click', hideIntro);
+      function tick() {
+        if (done) return;
+        var elapsed = (Date.now() - start) / 1000;
+        var left = Math.max(0, INTRO_DURATION - elapsed);
+        if (progress) progress.style.width = Math.min(100, (elapsed / INTRO_DURATION) * 100) + '%';
+        if (skipSec) skipSec.textContent = Math.ceil(left);
+        if (countdownEl) countdownEl.textContent = Math.ceil(left);
+        if (left <= 0) hideIntro();
+        else requestAnimationFrame(tick);
+      }
+      requestAnimationFrame(tick);
+      setTimeout(hideIntro, INTRO_DURATION * 1000);
+    })();
+      seedProductsIfEmpty();
+      updateNavbar();
+      updateCartBadge();
+      updateWishlistBadge();
+      loadFeaturedProducts('featured-products', 6);
+      loadExclusiveProducts('exclusive-products', 6);
+      loadUpcomingProducts('upcoming-products');
+      if (typeof updateFooterAuth === 'function') updateFooterAuth();
+    (function(){
+      var modal = document.getElementById('product-view-modal');
+      var closeBtn = document.getElementById('product-view-close-btn');
+      var backdrop = document.getElementById('product-view-close');
+      var inner3d = document.getElementById('product-view-3d-inner');
+      var wrap3d = document.getElementById('product-view-3d');
+      var rotX = 0, rotY = 0, scale = 1, dragging = false, startX, startY, startRotX, startRotY;
+      function closeModal() {
+        if (!modal) return;
+        modal.classList.remove('open');
+        modal.classList.remove('product-view-visible');
+        modal.setAttribute('aria-hidden', 'true');
+        document.body.classList.remove('product-view-body-lock');
+      }
+      function openModal(p) {
+        if (!modal || !p) return;
+        document.getElementById('product-view-img').src = p.imageUrl || 'https://via.placeholder.com/400?text=No+Image';
+        document.getElementById('product-view-name').textContent = p.name;
+        document.getElementById('product-view-category').textContent = p.category || 'Eyewear';
+        document.getElementById('product-view-price').textContent = (p.price != null && p.price !== '' && !isNaN(p.price)) ? '₹' + p.price : 'Coming Soon';
+        document.getElementById('product-view-link').href = p.id ? 'products.html?highlight=' + encodeURIComponent(p.id) : 'products.html';
+        rotX = 0; rotY = 0; scale = 1;
+        if (inner3d) { inner3d.style.transform = ''; inner3d.classList.remove('user-rotated'); }
+        document.body.classList.add('product-view-body-lock');
+        modal.classList.add('open');
+        modal.setAttribute('aria-hidden', 'false');
+        requestAnimationFrame(function() { modal.classList.add('product-view-visible'); });
+      }
+      function applyTransform() {
+        if (inner3d) inner3d.style.transform = 'rotateX(' + rotX + 'deg) rotateY(' + rotY + 'deg) scale(' + scale + ')';
+      }
+      if (wrap3d && inner3d) {
+        function startDrag(x, y) { dragging = true; if (inner3d) inner3d.classList.add('user-rotated'); startX = x; startY = y; startRotY = rotY; startRotX = rotX; }
+        function moveDrag(x, y) {
+          if (!dragging) return;
+          rotY = startRotY + (x - startX);
+          rotX = Math.max(-30, Math.min(30, startRotX - (y - startY)));
+          applyTransform();
+        }
+        wrap3d.addEventListener('mousedown', function(e) { e.preventDefault(); startDrag(e.clientX, e.clientY); });
+        document.addEventListener('mousemove', function(e) { moveDrag(e.clientX, e.clientY); });
+        document.addEventListener('mouseup', function() { dragging = false; });
+        wrap3d.addEventListener('touchstart', function(e) { if (e.touches.length === 1) startDrag(e.touches[0].clientX, e.touches[0].clientY); }, { passive: true });
+        document.addEventListener('touchmove', function(e) { if (e.touches.length === 1 && dragging) moveDrag(e.touches[0].clientX, e.touches[0].clientY); }, { passive: true });
+        document.addEventListener('touchend', function() { dragging = false; });
+        wrap3d.addEventListener('wheel', function(e) {
+          e.preventDefault();
+          scale = Math.max(0.5, Math.min(2, scale - e.deltaY * 0.002));
+          applyTransform();
+        }, { passive: false });
+      }
+      window.openProductView = openModal;
+      if (closeBtn) closeBtn.addEventListener('click', closeModal);
+      if (backdrop) backdrop.addEventListener('click', closeModal);
+      modal.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeModal(); });
+    })();
+    (function(){
+      var slides = document.getElementById('slider-slides');
+      var dotsEl = document.getElementById('slider-dots');
+      if (!slides || !dotsEl) return;
+      var n = slides.children.length, cur = 0;
+      for (var i = 0; i < n; i++) { var d = document.createElement('span'); d.setAttribute('data-index', i); if (i === 0) d.classList.add('active'); dotsEl.appendChild(d); }
+      function go(i) { cur = (i + n) % n; slides.style.transform = 'translateX(-' + cur * 100 + '%)'; [].forEach.call(dotsEl.querySelectorAll('span'), function(el, j) { el.classList.toggle('active', j === cur); }); }
+      dotsEl.querySelectorAll('span').forEach(function(d) { d.addEventListener('click', function() { go(parseInt(d.getAttribute('data-index'), 10)); }); });
+      setInterval(function() { go(cur + 1); }, 4500);
+    })();
+  </script>
+</body>
+</html>

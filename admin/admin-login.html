@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Login - Lenskart Clone</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+  <nav class="navbar">
+    <div class="nav-inner">
+      <a href="../index.html" class="nav-logo">Lenskart</a>
+      <div class="nav-links"><a href="../index.html">Back to Website</a></div>
+    </div>
+  </nav>
+  <div class="container">
+    <div class="form-card">
+      <h2>Admin Login</h2>
+      <div id="admin-alert"></div>
+      <form id="admin-login-form">
+        <div class="form-group"><label for="username">Username</label><input type="text" id="username" required placeholder="admin"></div>
+        <div class="form-group"><label for="password">Password</label><input type="password" id="password" required placeholder="****"></div>
+        <button type="submit" class="btn btn-primary">Login</button>
+      </form>
+      <p class="form-footer" style="font-size:0.85rem; color: var(--text-light);">Default: admin / admin123</p>
+    </div>
+  </div>
+  <footer class="site-footer"><div class="footer-inner"><div class="footer-bottom">&copy; Navdip Talsaniya. <a href="../index.html" style="color: rgba(255,255,255,0.9);">Back to Website</a></div></div></footer>
+
+  
+<script src="../js/storage.js"></script>
+  <script src="../js/admin.js"></script>
+  <script>
+    if (getAdminSession()) window.location.href = 'dashboard.html';
+    document.getElementById('admin-login-form').onsubmit = function(e) {
+      e.preventDefault();
+      var r = adminLogin(document.getElementById('username').value.trim(), document.getElementById('password').value);
+      var el = document.getElementById('admin-alert');
+      el.innerHTML = r.success ? '<div class="alert alert-success">Login successful.</div>' : '<div class="alert alert-error">' + (r.message || 'Invalid credentials.') + '</div>';
+      if (r.success) setTimeout(function() { window.location.href = 'dashboard.html'; }, 500);
+    };
+  </script>
+</body>
+</html>

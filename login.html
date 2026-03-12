@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - Lenskart Clone</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <nav class="navbar">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">Lenskart</a>
+      <div class="nav-links"><a href="index.html">Home</a><a href="products.html">Products</a><a href="about.html">About</a><a href="reviews.html">Reviews</a><a href="contact.html">Contact</a><a href="register.html">Register</a></div>
+    </div>
+  </nav>
+  <div class="container">
+    <div class="form-card">
+      <h2>User Login</h2>
+      <div id="login-alert"></div>
+      <form id="login-form">
+        <div class="form-group"><label for="email">Email</label><input type="email" id="email" required placeholder="your@email.com"></div>
+        <div class="form-group"><label for="password">Password</label><input type="password" id="password" required placeholder="****"></div>
+        <button type="submit" class="btn btn-primary">Login</button>
+      </form>
+      <p class="form-footer">Don't have an account? <a href="register.html">Register</a></p>
+    </div>
+  </div>
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-nav-links">
+        <a href="index.html">Home</a><a href="products.html">Products</a><a href="about.html">About</a><a href="reviews.html">Reviews</a><a href="contact.html">Contact</a><a href="profile.html" id="footer-profile" style="display:none;">Profile</a><a href="cart.html">Cart</a><a href="login.html" id="footer-login">Login</a><a href="register.html" id="footer-register">Register</a><a href="#" id="footer-logout" style="display:none;" onclick="logoutUser(); return false;">Logout</a>
+      </div>
+      <div class="footer-bottom">&copy; Navdip Talsaniya.</div>
+    </div>
+  </footer>
+<script src="js/storage.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/user.js"></script>
+  <script>
+    redirectIfLoggedIn();
+    if (typeof updateFooterAuth === 'function') updateFooterAuth();
+    document.getElementById('login-form').onsubmit = function(e) {
+      e.preventDefault();
+      var r = loginUser(document.getElementById('email').value, document.getElementById('password').value);
+      var el = document.getElementById('login-alert');
+      el.innerHTML = r.success ? '<div class="alert alert-success">' + r.message + '</div>' : '<div class="alert alert-error">' + r.message + '</div>';
+      if (r.success) setTimeout(function() { window.location.href = (new URLSearchParams(window.location.search).get('redirect')) || 'index.html'; }, 800);
+    };
+  </script>
+</body>
+</html>

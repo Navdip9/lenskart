@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Profile - Lenskart Clone</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+  <div class="admin-layout">
+    <aside class="admin-sidebar">
+      <div class="sidebar-title">Admin Panel</div>
+      <nav>
+        <a href="../index.html">Home</a>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="users.html">Users</a>
+        <a href="products.html">Products / Services</a>
+        <a href="upcoming.html">Upcoming Products</a>
+        <a href="orders.html">Orders</a>
+        <a href="profile.html" class="active">Profile</a>
+        <a href="contact.html">Contact</a>
+        <div class="sidebar-divider"></div>
+        <a href="#" onclick="adminLogout(); return false;">Logout</a>
+      </nav>
+    </aside>
+    <main class="admin-main">
+      <div class="container">
+        <h2 class="section-title">Admin Profile</h2>
+        <div class="admin-section form-card" style="max-width: 400px;">
+          <h2>Account</h2>
+          <p style="margin-bottom: 0.5rem;"><strong>Username:</strong> admin</p>
+          <p style="margin-bottom: 1rem; color: var(--text-light); font-size: 0.9rem;">Default login: admin / admin123</p>
+          <a href="../index.html" class="btn btn-secondary" style="margin-right: 0.5rem;">Home</a>
+          <a href="#" class="btn btn-primary" onclick="adminLogout(); return false;">Logout</a>
+        </div>
+      </div>
+    </main>
+  </div>
+  <footer class="site-footer"><div class="footer-inner"><div class="footer-bottom">&copy; Navdip Talsaniya.</div></div></footer>
+<script src="../js/storage.js"></script>
+  <script src="../js/admin.js"></script>
+  <script>
+    if (!requireAdmin()) throw new Error('Redirecting');
+  </script>
+</body>
+</html>

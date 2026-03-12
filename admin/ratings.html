@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Product Ratings - Lenskart Admin</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+  <div class="admin-layout">
+    <aside class="admin-sidebar">
+      <div class="sidebar-title">Admin Panel</div>
+      <nav>
+        <a href="../index.html">Home</a>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="users.html">Users</a>
+        <a href="products.html">Products / Services</a>
+        <a href="upcoming.html">Upcoming Products</a>
+        <a href="orders.html">Orders</a>
+        <a href="ratings.html" class="active">Ratings</a>
+        <a href="profile.html">Profile</a>
+        <a href="contact.html">Contact</a>
+        <div class="sidebar-divider"></div>
+        <a href="#" onclick="adminLogout(); return false;">Logout</a>
+      </nav>
+    </aside>
+    <main class="admin-main">
+      <div class="container">
+        <h2 class="section-title">Product Ratings & Reviews</h2>
+        
+        <div class="ratings-stats">
+          <div class="stat-card">
+            <h3>Average Rating</h3>
+            <span class="value" id="avg-rating">0.0</span>
+          </div>
+          <div class="stat-card">
+            <h3>Total Reviews</h3>
+            <span class="value" id="total-reviews">0</span>
+          </div>
+          <div class="stat-card">
+            <h3>Products Reviewed</h3>
+            <span class="value" id="products-reviewed">0</span>
+          </div>
+        </div>
+        
+        <div class="admin-section">
+          <h2>Highest Rated Products</h2>
+          <div id="top-rated-products"></div>
+        </div>
+        
+        <div class="admin-section">
+          <h2>All Product Reviews</h2>
+          <div id="all-reviews"></div>
+        </div>
+      </div>
+    </main>
+  </div>
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-grid">
+        <div class="footer-col"><h4>Admin</h4><ul><li><a href="dashboard.html">Dashboard</a></li><li><a href="products.html">Products</a></li><li><a href="orders.html">Orders</a></li><li><a href="ratings.html">Ratings</a></li></ul></div>
+        <div class="footer-col"><h4>Site</h4><ul><li><a href="../index.html">View Website</a></li></ul></div>
+      </div>
+      <div class="footer-bottom">&copy; Navdip Talsaniya.</div>
+    </div>
+  </footer>
+<script src="../js/storage.js"></script>
+  <script src="../js/admin.js"></script>
+  <script src="../js/user.js"></script>
+  <script>
+    if (!requireAdmin()) throw new Error('Redirecting');
+    
+    function renderRatingsPage() {
+      var products = getProducts();
+      var reviews = getProductReviews();
+      
+      // Calculate stats
+      var totalReviews = reviews.length;
+      var productsWithReviews = {};
+      reviews.forEach(function(r) {
+        productsWithReviews[r.productId] = true;
+      });
+      var productsReviewed = Object.keys(productsWithReviews).length;
+      
+      var avgRating = 0;
+      if (totalReviews > 0) {
+        var sum = reviews.reduce(function(s, r) { return s + (r.rating || 0); }, 0);
+        avgRating = sum / totalReviews;
+      }
+      
+      document.getElementById('avg-rating').textContent = avgRating.toFixed(1);
+      document.getElementById('total-reviews').textContent = totalReviews;
+      document.getElementById('products-reviewed').textContent = productsReviewed;
+      
+      // Get ratings by product
+      var ratingsByProduct = {};
+      reviews.forEach(function(r) {
+        if (!ratingsByProduct[r.productId]) {
+          ratingsByProduct[r.productId] = { sum: 0, count: 0, reviews: [] };
+        }
+        ratingsByProduct[r.productId].sum += r.rating || 0;
+        ratingsByProduct[r.productId].count += 1;
+        ratingsByProduct[r.productId].reviews.push(r);
+      });
+      
+      // Sort products by rating
+      var sortedProducts = Object.keys(ratingsByProduct).map(function(pid) {
+        return {
+          productId: pid,
+          avgRating: ratingsByProduct[pid].sum / ratingsByProduct[pid].count,
+          reviewCount: ratingsByProduct[pid].count,
+          reviews: ratingsByProduct[pid].reviews
+        };
+      }).sort(function(a, b) { return b.avgRating - a.avgRating; });
+      
+      // Render top rated products
+      var topRatedEl = document.getElementById('top-rated-products');
+      if (sortedProducts.length === 0) {
+        topRatedEl.innerHTML = '<p style="color: var(--text-light);">No reviews yet.</p>';
+      } else {
+        var html = '<div class="product-grid">';
+        sortedProducts.slice(0, 12).forEach(function(item) {
+          var product = products.find(function(p) { return p.id === item.productId; });
+          if (!product) return;
+          
+          var fullStars = Math.floor(item.avgRating);
+          var starsHtml = '';
+          for (var i = 1; i <= 5; i++) {
+            starsHtml += i <= fullStars ? '★' : '☆';
+          }
+          
+          var fallbackImg = 'https://via.placeholder.com/300/0066cc/ffffff?text=Eyewear';
+          
+          // For admin panel (in admin/ folder), prepend '../' to relative image paths
+          var imgUrl = product.imageUrl || '';
+          if (imgUrl && !imgUrl.startsWith('http') && !imgUrl.startsWith('../')) {
+            imgUrl = '../' + imgUrl;
+          }
+          
+          html += '<div class="rating-product-card">' +
+            '<img src="' + (imgUrl || fallbackImg) + '" alt="' + product.name + '">' +
+            '<div class="rating-product-info">' +
+            '<div class="name">' + product.name + '</div>' +
+            '<div class="category">' + (product.category || 'Eyewear') + '</div>' +
+            '<div class="rating-product-stats">' +
+            '<span class="stars">' + starsHtml + '</span>' +
+            '<span class="avg">' + item.avgRating.toFixed(1) + '</span>' +
+            '<span class="count">(' + item.reviewCount + ' reviews)</span>' +
+            '</div>' +
+            '</div>' +
+            '</div>';
+        });
+        html += '</div>';
+        topRatedEl.innerHTML = html;
+      }
+      
+      // Render all reviews
+      var allReviewsEl = document.getElementById('all-reviews');
+      if (reviews.length === 0) {
+        allReviewsEl.innerHTML = '<p style="color: var(--text-light);">No reviews yet.</p>';
+      } else {
+        var sortedReviews = reviews.slice().sort(function(a, b) { return new Date(b.createdAt) - new Date(a.createdAt); });
+        var html = '<div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Product</th><th>User</th><th>Rating</th><th>Review</th><th>Date</th></tr></thead><tbody>';
+        sortedReviews.forEach(function(r) {
+          var product = products.find(function(p) { return p.id === r.productId; });
+          var productName = product ? product.name : 'Unknown Product';
+          
+          var stars = '';
+          for (var i = 1; i <= 5; i++) {
+            stars += i <= r.rating ? '★' : '☆';
+          }
+          
+          var date = new Date(r.createdAt).toLocaleDateString();
+          
+          html += '<tr>' +
+            '<td>' + productName + '</td>' +
+            '<td>' + (r.userName || 'Anonymous') + '</td>' +
+            '<td><span style="color: #ffc107;">' + stars + '</span> (' + r.rating + ')</td>' +
+            '<td>' + (r.review || '-') + '</td>' +
+            '<td>' + date + '</td>' +
+            '</tr>';
+        });
+        html += '</tbody></table></div>';
+        allReviewsEl.innerHTML = html;
+      }
+    }
+    
+    renderRatingsPage();
+  </script>
+</body>
+</html>

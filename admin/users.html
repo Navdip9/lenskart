@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Users - Lenskart Clone</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+  <div class="admin-layout">
+    <aside class="admin-sidebar">
+      <div class="sidebar-title">Admin Panel</div>
+      <nav>
+        <a href="../index.html">Home</a>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="users.html" class="active">Users</a>
+        <a href="products.html">Products / Services</a>
+        <a href="orders.html">Orders</a>
+        <a href="profile.html">Profile</a>
+        <a href="contact.html">Contact</a>
+        <div class="sidebar-divider"></div>
+        <a href="#" onclick="adminLogout(); return false;">Logout</a>
+      </nav>
+    </aside>
+    <main class="admin-main">
+      <div class="container">
+        <h2 class="section-title">User Management</h2>
+        <div class="dashboard-stats" style="margin-bottom: 1.5rem;">
+          <div class="stat-card"><h3>Total Registered Users</h3><span class="value" id="stat-total-users">0</span></div>
+        </div>
+        <div class="admin-section">
+          <h2>Registered Users</h2>
+          <p style="color: var(--text-light); margin-bottom: 1rem;">Manage users. Deleting a user removes their account only (orders remain).</p>
+          <div class="admin-table-wrap">
+            <table class="admin-table">
+              <thead><tr><th>Name</th><th>Email</th><th>Registered</th><th>Actions</th></tr></thead>
+              <tbody id="users-tbody"></tbody>
+            </table>
+          </div>
+          <p id="no-users" style="display:none; color: var(--text-light);">No registered users yet.</p>
+        </div>
+      </div>
+    </main>
+  </div>
+  <footer class="site-footer"><div class="footer-inner"><div class="footer-bottom">&copy; Navdip Talsaniya.</div></div></footer>
+<script src="../js/storage.js"></script>
+  <script src="../js/admin.js"></script>
+  <script src="../js/auth.js"></script>
+  <script>
+    if (!requireAdmin()) throw new Error('Redirecting');
+    function renderUsers() {
+      var users = getUsers();
+      document.getElementById('stat-total-users').textContent = users.length;
+      var tbody = document.getElementById('users-tbody');
+      var noUsers = document.getElementById('no-users');
+      if (users.length === 0) {
+        tbody.innerHTML = '';
+        noUsers.style.display = 'block';
+        return;
+      }
+      noUsers.style.display = 'none';
+      tbody.innerHTML = users.map(function(u) {
+        var date = u.createdAt ? new Date(u.createdAt).toLocaleString() : '-';
+        return '<tr><td>' + (u.name || '-') + '</td><td>' + (u.email || '-') + '</td><td>' + date + '</td><td class="actions"><button type="button" class="btn btn-danger btn-delete-user" data-id="' + u.id + '">Delete</button></td></tr>';
+      }).join('');
+      tbody.querySelectorAll('.btn-delete-user').forEach(function(btn) {
+        btn.onclick = function() {
+          var id = btn.getAttribute('data-id');
+          if (!confirm('Delete this user? They will not be able to login again.')) return;
+          deleteUser(id);
+          renderUsers();
+        };
+      });
+    }
+    renderUsers();
+  </script>
+</body>
+</html>

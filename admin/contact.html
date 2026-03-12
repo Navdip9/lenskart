@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Contact Messages - Lenskart Clone</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+  <div class="admin-layout">
+    <aside class="admin-sidebar">
+      <div class="sidebar-title">Admin Panel</div>
+      <nav>
+        <a href="../index.html">Home</a>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="users.html">Users</a>
+        <a href="products.html">Products / Services</a>
+        <a href="upcoming.html">Upcoming Products</a>
+        <a href="orders.html">Orders</a>
+        <a href="ratings.html">Rating</a>
+        <a href="profile.html">Profile</a>
+        <a href="contact.html" class="active">Contact</a>
+        <div class="sidebar-divider"></div>
+        <a href="#" onclick="adminLogout(); return false;">Logout</a>
+      </nav>
+    </aside>
+    <main class="admin-main">
+      <div class="container">
+        <h2 class="section-title">Contact Messages</h2>
+        <p style="color: var(--text-light); margin-bottom: 1rem;">All messages submitted by users via the contact form.</p>
+        <div class="admin-section">
+          <div id="contact-messages"></div>
+        </div>
+      </div>
+    </main>
+  </div>
+  <footer class="site-footer"><div class="footer-inner"><div class="footer-bottom">&copy; Navdip Talsaniya.</div></div></footer>
+<script src="../js/storage.js"></script>
+  <script src="../js/admin.js"></script>
+  <script src="../js/dashboard.js"></script>
+  <script>
+    if (!requireAdmin()) throw new Error('Redirecting');
+    renderContactMessages('contact-messages');
+  </script>
+</body>
+</html>
